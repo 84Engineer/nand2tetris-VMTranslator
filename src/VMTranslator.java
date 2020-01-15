@@ -3,6 +3,8 @@ import java.util.List;
 
 public class VMTranslator {
 
+    public static final String COMMENT = "//";
+
     public static void main(String[] args) throws IOException {
 
         if (args.length == 0) {

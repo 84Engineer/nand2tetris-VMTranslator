@@ -3,7 +3,6 @@ import java.util.List;
 
 public class Parser {
 
-   private static final String COMMENT = "//";
    private static final String CMD_SEPARATOR = " ";
 
    private List<String> sourceCode;
@@ -43,11 +42,11 @@ public class Parser {
 
    private boolean isEmptyLine(String codeLine) {
       codeLine = codeLine.trim();
-      return codeLine.equals("") || codeLine.startsWith(COMMENT);
+      return codeLine.equals("") || codeLine.startsWith(VMTranslator.COMMENT);
    }
 
    private String cleanLine(String codeLine) {
-      int offset = codeLine.indexOf(COMMENT);
+      int offset = codeLine.indexOf(VMTranslator.COMMENT);
       if (offset != -1) {
          codeLine = codeLine.substring(0, offset);
       }

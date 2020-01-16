@@ -1,12 +1,30 @@
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
 public class FileUtil {
 
-   public static List<String> readAllLines(String filePath) throws IOException {
+   private String filePath;
+
+   public FileUtil(String filePath) {
+      this.filePath = filePath;
+   }
+
+   public List<String> readAllLines() throws IOException {
       return Files.readAllLines(Paths.get(filePath));
+   }
+
+   public void saveAllLines(List<String> lines) throws IOException {
+      Path sourceFile = Paths.get(filePath);
+      Path parent = sourceFile.getParent();
+
+      String outputFileName = sourceFile.getFileName().toString().split("\\.")[0] + ".asm";
+
+      Path outputFile = parent != null ? parent.resolve(outputFileName) : sourceFile.resolveSibling(outputFileName);
+
+      Files.write(outputFile, lines);
    }
 
 }

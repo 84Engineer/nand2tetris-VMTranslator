@@ -11,7 +11,9 @@ public class VMTranslator {
             throw new IllegalArgumentException("Source code file not passed.");
         }
 
-        List<String> sourceCode = FileUtil.readAllLines(args[0]);
+        FileUtil fileUtil = new FileUtil(args[0]);
+
+        List<String> sourceCode = fileUtil.readAllLines();
 
         Parser parser = new Parser(sourceCode);
         List<VmCommand> commands = parser.process();
@@ -19,6 +21,7 @@ public class VMTranslator {
         Translator translator = new Translator(commands);
         List<String> asmCode = translator.translate();
 
+        fileUtil.saveAllLines(asmCode);
 
     }
 

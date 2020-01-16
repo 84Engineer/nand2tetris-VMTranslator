@@ -7,11 +7,11 @@ public class Translator {
       local, argument, _this, that, constant, _static, pointer, temp
    }
 
-   private static final long SP = 0L;
-   private static final long LCL = 1L;
-   private static final long ARG = 2L;
-   private static final long THIS = 3L;
-   private static final long THAT = 4L;
+   private static final String SP = "R0";
+   private static final String LCL = "R1";
+   private static final String ARG = "R2";
+   private static final String THIS = "R3";
+   private static final String THAT = "R4";
 
    private static final long STATIC_START = 16L;
    private static final long STATIC_END = 255L;
@@ -65,16 +65,24 @@ public class Translator {
       String segmentStr = arg0.equals("this") || arg0.equals("static") ? "_" + arg0 : arg0;
       MemSegment memSegment = MemSegment.valueOf(segmentStr);
 
+      List<String> result = new ArrayList<>();
+
       switch (memSegment) {
          case local:
+            result.addAll(push(LCL, vmCommand));
             break;
          case argument:
+            result.addAll(push(ARG, vmCommand));
             break;
          case _this:
+            result.addAll(push(THIS, vmCommand));
             break;
          case that:
+            result.addAll(push(THAT, vmCommand));
             break;
          case constant:
+            result.add("@" + vmCommand.getArg1());
+            result.add("D=A");
             break;
          case _static:
             break;
@@ -85,7 +93,29 @@ public class Translator {
          default:
             throw new IllegalStateException("Unsupported memory segment: " + memSegment);
       }
-      return null;
+      result.addAll(push());
+      return result;
+   }
+
+   private List<String> push(String memSegment, VmCommand vmCommand) {
+      List<String> result = new ArrayList<>();
+      result.add("@" + memSegment);
+      result.add("D=M");
+      result.add("@" + vmCommand.getArg1());
+      result.add("D=D+A");
+      result.add("A=D");
+      result.add("D=M");
+      return result;
+   }
+
+   private List<String> push() {
+      List<String> result = new ArrayList<>();
+      result.add("@" + SP);
+      result.add("A=M");
+      result.add("M=D");
+      result.add("@" + SP);
+      result.add("M=M+1");
+      return result;
    }
 
 }

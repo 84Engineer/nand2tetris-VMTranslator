@@ -17,7 +17,7 @@ public class Translator {
    private static final long STATIC_END = 255L;
 
    private static final long TEMP_START = 5L;
-   private static final long TEMP_END = 12L;
+//   private static final long TEMP_END = 12L;
 
    private List<VmCommand> vmCommands;
 
@@ -89,10 +89,18 @@ public class Translator {
          case pointer:
             break;
          case temp:
+            result.addAll(pushTemp(vmCommand));
             break;
          default:
             throw new IllegalStateException("Unsupported memory segment: " + memSegment);
       }
+      return result;
+   }
+
+   private List<String> pushTemp(VmCommand vmCommand) {
+      List<String> result = new ArrayList<>();
+      result.add("@" + (TEMP_START + Long.parseLong(vmCommand.getArg1())));
+      result.add("D=M");
       result.addAll(push());
       return result;
    }
@@ -105,6 +113,7 @@ public class Translator {
       result.add("D=D+A");
       result.add("A=D");
       result.add("D=M");
+      result.addAll(push());
       return result;
    }
 

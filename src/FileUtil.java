@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,11 +21,16 @@ public class FileUtil {
       Path sourceFile = Paths.get(filePath);
       Path parent = sourceFile.getParent();
 
-      String outputFileName = sourceFile.getFileName().toString().split("\\.")[0] + ".asm";
+      String outputFileName = getFileName(sourceFile.getFileName().toString()) + ".asm";
 
       Path outputFile = parent != null ? parent.resolve(outputFileName) : sourceFile.resolveSibling(outputFileName);
 
       Files.write(outputFile, lines);
+   }
+
+   public String getFileName(String filePath) {
+      String[] fileParts = filePath.split(File.pathSeparator);
+      return fileParts[fileParts.length - 1].split("\\.")[0];
    }
 
 }

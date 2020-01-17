@@ -7,22 +7,26 @@ public class Translator {
       local, argument, _this, that, constant, _static, pointer, temp
    }
 
-   private static final String SP = "R0";
-   private static final String LCL = "R1";
-   private static final String ARG = "R2";
-   private static final String THIS = "R3";
-   private static final String THAT = "R4";
+   public static final String SP = "R0";
+   public static final String LCL = "R1";
+   public static final String ARG = "R2";
+   public static final String THIS = "R3";
+   public static final String THAT = "R4";
 
-   private static final long STATIC_START = 16L;
-   private static final long STATIC_END = 255L;
+//   private static final long STATIC_START = 16L;
+//   private static final long STATIC_END = 255L;
 
-   private static final long TEMP_START = 5L;
+   public static final long TEMP_START = 5L;
 //   private static final long TEMP_END = 12L;
 
+   private String fileName;
    private List<VmCommand> vmCommands;
+   private PushTranslate pushTranslate;
 
-   public Translator(List<VmCommand> vmCommands) {
+   public Translator(String fileName, List<VmCommand> vmCommands) {
+      this.fileName = fileName;
       this.vmCommands = vmCommands;
+      this.pushTranslate = new PushTranslate(fileName);
    }
 
    public List<String> translate() {
@@ -31,7 +35,7 @@ public class Translator {
          asmCode.add(VMTranslator.COMMENT + " " + vmCommand.getVmCommand());
          switch (vmCommand.getOpCode()) {
             case push:
-               asmCode.addAll(push(vmCommand));
+               asmCode.addAll(pushTranslate.translate(vmCommand));
                break;
             case pop:
                break;
@@ -58,73 +62,6 @@ public class Translator {
          }
       }
       return asmCode;
-   }
-
-   private List<String> push(VmCommand vmCommand) {
-      String arg0 = vmCommand.getArg0();
-      String segmentStr = arg0.equals("this") || arg0.equals("static") ? "_" + arg0 : arg0;
-      MemSegment memSegment = MemSegment.valueOf(segmentStr);
-
-      List<String> result = new ArrayList<>();
-
-      switch (memSegment) {
-         case local:
-            result.addAll(push(LCL, vmCommand));
-            break;
-         case argument:
-            result.addAll(push(ARG, vmCommand));
-            break;
-         case _this:
-            result.addAll(push(THIS, vmCommand));
-            break;
-         case that:
-            result.addAll(push(THAT, vmCommand));
-            break;
-         case constant:
-            result.add("@" + vmCommand.getArg1());
-            result.add("D=A");
-            break;
-         case _static:
-            break;
-         case pointer:
-            break;
-         case temp:
-            result.addAll(pushTemp(vmCommand));
-            break;
-         default:
-            throw new IllegalStateException("Unsupported memory segment: " + memSegment);
-      }
-      return result;
-   }
-
-   private List<String> pushTemp(VmCommand vmCommand) {
-      List<String> result = new ArrayList<>();
-      result.add("@" + (TEMP_START + Long.parseLong(vmCommand.getArg1())));
-      result.add("D=M");
-      result.addAll(push());
-      return result;
-   }
-
-   private List<String> push(String memSegment, VmCommand vmCommand) {
-      List<String> result = new ArrayList<>();
-      result.add("@" + memSegment);
-      result.add("D=M");
-      result.add("@" + vmCommand.getArg1());
-      result.add("D=D+A");
-      result.add("A=D");
-      result.add("D=M");
-      result.addAll(push());
-      return result;
-   }
-
-   private List<String> push() {
-      List<String> result = new ArrayList<>();
-      result.add("@" + SP);
-      result.add("A=M");
-      result.add("M=D");
-      result.add("@" + SP);
-      result.add("M=M+1");
-      return result;
    }
 
 }

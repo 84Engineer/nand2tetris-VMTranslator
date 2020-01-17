@@ -18,7 +18,7 @@ public class VMTranslator {
         Parser parser = new Parser(sourceCode);
         List<VmCommand> commands = parser.process();
 
-        Translator translator = new Translator(commands);
+        Translator translator = new Translator(fileUtil.getFileName(args[0]), commands);
         List<String> asmCode = translator.translate();
 
         fileUtil.saveAllLines(asmCode);

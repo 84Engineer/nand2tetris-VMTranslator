@@ -22,11 +22,13 @@ public class Translator {
    private List<VmCommand> vmCommands;
    private PushTranslate pushTranslate;
    private PopTranslate popTranslate;
+   private OperationTranslate operationTranslate;
 
    public Translator(String fileName, List<VmCommand> vmCommands) {
       this.vmCommands = vmCommands;
       this.pushTranslate = new PushTranslate(fileName);
       this.popTranslate = new PopTranslate(fileName);
+      this.operationTranslate = new OperationTranslate();
    }
 
    public List<String> translate() {
@@ -40,26 +42,8 @@ public class Translator {
             case pop:
                asmCode.addAll(popTranslate.translate(vmCommand));
                break;
-            case add:
-               break;
-            case sub:
-               break;
-            case neg:
-               break;
-            case eq:
-               break;
-            case gt:
-               break;
-            case lt:
-               break;
-            case and:
-               break;
-            case or:
-               break;
-            case not:
-               break;
             default:
-               throw new IllegalStateException("Unsupported command: " + vmCommand.getOpCode());
+               asmCode.addAll(operationTranslate.translate(vmCommand));
          }
       }
       return asmCode;

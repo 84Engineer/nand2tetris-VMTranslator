@@ -3,3 +3,4 @@ VMTranslator.iml
 target/
 out/
 Push.asm
+BasicTest.asm

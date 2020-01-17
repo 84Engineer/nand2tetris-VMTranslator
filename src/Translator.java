@@ -19,14 +19,14 @@ public class Translator {
    public static final long TEMP_START = 5L;
 //   private static final long TEMP_END = 12L;
 
-   private String fileName;
    private List<VmCommand> vmCommands;
    private PushTranslate pushTranslate;
+   private PopTranslate popTranslate;
 
    public Translator(String fileName, List<VmCommand> vmCommands) {
-      this.fileName = fileName;
       this.vmCommands = vmCommands;
       this.pushTranslate = new PushTranslate(fileName);
+      this.popTranslate = new PopTranslate(fileName);
    }
 
    public List<String> translate() {
@@ -38,6 +38,7 @@ public class Translator {
                asmCode.addAll(pushTranslate.translate(vmCommand));
                break;
             case pop:
+               asmCode.addAll(popTranslate.translate(vmCommand));
                break;
             case add:
                break;

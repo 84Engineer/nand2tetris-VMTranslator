@@ -1,4 +1,5 @@
 .idea/
 VMTranslator.iml
 target/
-
+out/
+Push.asm

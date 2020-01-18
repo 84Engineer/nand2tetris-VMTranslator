@@ -1,5 +1,5 @@
 // Test push
 
 push constant 100
-push constant 20
+push constant 35
 sub

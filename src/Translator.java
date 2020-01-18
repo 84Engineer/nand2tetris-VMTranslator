@@ -22,13 +22,13 @@ public class Translator {
    private List<VmCommand> vmCommands;
    private PushTranslate pushTranslate;
    private PopTranslate popTranslate;
-   private OperationTranslate operationTranslate;
+   private ArithmeticTranslate arithmeticTranslate;
 
    public Translator(String fileName, List<VmCommand> vmCommands) {
       this.vmCommands = vmCommands;
       this.pushTranslate = new PushTranslate(fileName);
       this.popTranslate = new PopTranslate(fileName);
-      this.operationTranslate = new OperationTranslate();
+      this.arithmeticTranslate = new ArithmeticTranslate();
    }
 
    public List<String> translate() {
@@ -43,7 +43,7 @@ public class Translator {
                asmCode.addAll(popTranslate.translate(vmCommand));
                break;
             default:
-               asmCode.addAll(operationTranslate.translate(vmCommand));
+               asmCode.addAll(arithmeticTranslate.translate(vmCommand));
          }
       }
       return asmCode;

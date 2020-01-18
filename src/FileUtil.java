@@ -29,7 +29,7 @@ public class FileUtil {
    }
 
    public String getFileName(String filePath) {
-      String[] fileParts = filePath.split(File.pathSeparator);
+      String[] fileParts = filePath.split(File.separator);
       return fileParts[fileParts.length - 1].split("\\.")[0];
    }
 

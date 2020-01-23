@@ -1,7 +1,7 @@
 public class VmCommand {
 
    enum OpCode {
-      push, pop, add, sub, neg, eq, gt, lt, and, or, not
+      push, pop, add, sub, neg, eq, gt, lt, and, or, not, label, _goto, if_goto;
    }
 
    private String vmCommand;

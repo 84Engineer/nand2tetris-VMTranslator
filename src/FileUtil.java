@@ -29,7 +29,8 @@ public class FileUtil {
    }
 
    public String getFileName(String filePath) {
-      String[] fileParts = filePath.split(File.separator);
+      String separator = File.separator.equals("\\") ? "\\\\" : File.separator;
+      String[] fileParts = filePath.split(separator);
       return fileParts[fileParts.length - 1].split("\\.")[0];
    }
 

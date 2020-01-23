@@ -13,22 +13,24 @@ public class Translator {
    public static final String THIS = "R3";
    public static final String THAT = "R4";
 
-//   private static final long STATIC_START = 16L;
-//   private static final long STATIC_END = 255L;
+   //   private static final long STATIC_START = 16L;
+   //   private static final long STATIC_END = 255L;
 
    public static final long TEMP_START = 5L;
-//   private static final long TEMP_END = 12L;
+   //   private static final long TEMP_END = 12L;
 
    private List<VmCommand> vmCommands;
    private PushTranslate pushTranslate;
    private PopTranslate popTranslate;
    private ArithmeticTranslate arithmeticTranslate;
+   private BranchTranslate branchTranslate;
 
    public Translator(String fileName, List<VmCommand> vmCommands) {
       this.vmCommands = vmCommands;
       this.pushTranslate = new PushTranslate(fileName);
       this.popTranslate = new PopTranslate(fileName);
       this.arithmeticTranslate = new ArithmeticTranslate();
+      this.branchTranslate = new BranchTranslate();
    }
 
    public List<String> translate() {
@@ -42,8 +44,24 @@ public class Translator {
             case pop:
                asmCode.addAll(popTranslate.translate(vmCommand));
                break;
-            default:
+            case add:
+            case sub:
+            case neg:
+            case eq:
+            case gt:
+            case lt:
+            case and:
+            case or:
+            case not:
                asmCode.addAll(arithmeticTranslate.translate(vmCommand));
+               break;
+            case label:
+            case _goto:
+            case if_goto:
+               asmCode.addAll(branchTranslate.translate(vmCommand));
+               break;
+            default:
+               throw new IllegalStateException("Unsupported command: " + vmCommand.getOpCode());
          }
       }
       return asmCode;

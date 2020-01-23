@@ -30,7 +30,10 @@ public class Parser {
             case 2:
                cmd.setArg0(cmdParts[1]);
             case 1:
-               cmd.setOpCode(VmCommand.OpCode.valueOf(cmdParts[0]));
+               String opCode = cmdParts[0];
+               opCode = opCode.contains("-") ? opCode.replace("-", "_") : opCode;
+               opCode = opCode.equals("goto") ? "_" + opCode : opCode;
+               cmd.setOpCode(VmCommand.OpCode.valueOf(opCode));
                break;
             default:
                throw new IllegalStateException("Unexpected command: " + codeLine);

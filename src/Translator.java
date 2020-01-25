@@ -24,13 +24,15 @@ public class Translator {
    private PopTranslate popTranslate;
    private ArithmeticTranslate arithmeticTranslate;
    private BranchTranslate branchTranslate;
+   private FunctionTranslate functionTranslate;
 
    public Translator(String fileName, List<VmCommand> vmCommands) {
       this.vmCommands = vmCommands;
       this.pushTranslate = new PushTranslate(fileName);
       this.popTranslate = new PopTranslate(fileName);
       this.arithmeticTranslate = new ArithmeticTranslate();
-      this.branchTranslate = new BranchTranslate();
+      this.branchTranslate = new BranchTranslate(fileName);
+      this.functionTranslate = new FunctionTranslate(fileName);
    }
 
    public List<String> translate() {
@@ -59,6 +61,11 @@ public class Translator {
             case _goto:
             case if_goto:
                asmCode.addAll(branchTranslate.translate(vmCommand));
+               break;
+            case call:
+            case _return:
+            case function:
+               asmCode.addAll(functionTranslate.translate(vmCommand));
                break;
             default:
                throw new IllegalStateException("Unsupported command: " + vmCommand.getOpCode());

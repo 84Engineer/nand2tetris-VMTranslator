@@ -32,7 +32,7 @@ public class Parser {
             case 1:
                String opCode = cmdParts[0];
                opCode = opCode.contains("-") ? opCode.replace("-", "_") : opCode;
-               opCode = opCode.equals("goto") ? "_" + opCode : opCode;
+               opCode = opCode.equals("goto") || opCode.equals("return") ? "_" + opCode : opCode;
                cmd.setOpCode(VmCommand.OpCode.valueOf(opCode));
                break;
             default:

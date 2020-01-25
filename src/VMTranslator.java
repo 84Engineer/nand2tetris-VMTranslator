@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class VMTranslator {
@@ -12,14 +13,17 @@ public class VMTranslator {
         }
 
         FileUtil fileUtil = new FileUtil(args[0]);
+        List<String> asmCode = new ArrayList<>();
 
-        List<String> sourceCode = fileUtil.readAllLines();
+        for (String filePath : fileUtil.getAllFiles()) {
+            List<String> sourceCode = fileUtil.readAllLines(filePath);
 
-        Parser parser = new Parser(sourceCode);
-        List<VmCommand> commands = parser.process();
+            Parser parser = new Parser(sourceCode);
+            List<VmCommand> commands = parser.process();
 
-        Translator translator = new Translator(fileUtil.getFileName(args[0]), commands);
-        List<String> asmCode = translator.translate();
+            Translator translator = new Translator(fileUtil.getFileName(filePath), commands);
+            asmCode.addAll(translator.translate());
+        }
 
         fileUtil.saveAllLines(asmCode);
 

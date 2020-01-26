@@ -5,6 +5,7 @@ public class FunctionTranslate {
 
    private final static String TEMP_REG_0 = "R13";
    private final static String TEMP_REG_1 = "R14";
+   private final static String TEMP_REG_2 = "R15";
 
    private String fileName;
 
@@ -26,7 +27,37 @@ public class FunctionTranslate {
             }
             break;
          case _return:
+            // Saving end frame
             result.add("@" + Translator.LCL);
+            result.add("D=M");
+            result.add("@" + TEMP_REG_0);
+            result.add("M=D");
+            // Saving return address
+            result.add("@5");
+            result.add("D=D-A");
+            result.add("@" + TEMP_REG_1);
+            result.add("M=D");
+            // Passing return value
+            result.add("@" + Translator.SP);
+            result.add("A=M-1");
+            result.add("D=M");
+            result.add("@" + TEMP_REG_2);
+            result.add("D=M");
+            result.add("@" + Translator.ARG);
+            result.add("A=M");
+            result.add("M=D");
+            // Setting SP
+            result.add("@" + Translator.ARG);
+            result.add("D=M+1");
+            result.add("@" + Translator.SP);
+            result.add("M=D");
+            // Restoring memory segments
+
+
+
+
+
+
             break;
          case call:
             break;

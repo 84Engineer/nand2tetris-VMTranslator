@@ -42,7 +42,7 @@ public class FunctionTranslate {
             result.add("A=M-1");
             result.add("D=M");
             result.add("@" + TEMP_REG_2);
-            result.add("D=M");
+            result.add("M=D");
             result.add("@" + Translator.ARG);
             result.add("A=M");
             result.add("M=D");
@@ -52,16 +52,27 @@ public class FunctionTranslate {
             result.add("@" + Translator.SP);
             result.add("M=D");
             // Restoring memory segments
-
-
-
-
-
-
+            result.addAll(restoreMemorySegment(Translator.THAT));
+            result.addAll(restoreMemorySegment(Translator.THIS));
+            result.addAll(restoreMemorySegment(Translator.ARG));
+            result.addAll(restoreMemorySegment(Translator.LCL));
+            // Goto return address
+//            result.add("@" + TEMP_REG_1);
+//            result.add("0;JMP");
             break;
          case call:
             break;
       }
+      return result;
+   }
+
+   private List<String> restoreMemorySegment(String memSegment) {
+      List<String> result = new ArrayList<>();
+      result.add("@" + TEMP_REG_0);
+      result.add("AM=M-1");
+      result.add("D=M");
+      result.add("@" + memSegment);
+      result.add("M=D");
       return result;
    }
 

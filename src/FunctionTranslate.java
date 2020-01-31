@@ -61,6 +61,36 @@ public class FunctionTranslate {
 //            result.add("0;JMP");
             break;
          case call:
+            // pushing return address
+            result.add("@" + Translator.SP);
+            result.add("A=M");
+            result.add("M=A"); //???
+            result.add("@" + Translator.SP);
+            result.add("AM=M+1");
+            // pushing memory segments
+            result.addAll(pushMemorySegment(Translator.LCL));
+            result.addAll(pushMemorySegment(Translator.ARG));
+            result.addAll(pushMemorySegment(Translator.THIS));
+            result.addAll(pushMemorySegment(Translator.THAT));
+            // ARG = SP - 5 - nArgs
+            result.add("@" + Translator.SP);
+            result.add("D=M");
+            result.add("@5");
+            result.add("D=D-A");
+            result.add("@" + vmCommand.getArg1());
+            result.add("D=D-A");
+            result.add("@" + Translator.ARG);
+            result.add("M=D");
+            // LCL = SP
+            result.add("@" + Translator.SP);
+            result.add("D=M");
+            result.add("@" + Translator.LCL);
+            result.add("M=D");
+            // goto function
+            result.add("@" + vmCommand.getArg0());
+            result.add("0;JMP");
+            // declare return address
+
             break;
       }
       return result;
@@ -76,6 +106,17 @@ public class FunctionTranslate {
       return result;
    }
 
+   private List<String> pushMemorySegment(String memSegment) {
+      List<String> result = new ArrayList<>();
+      result.add("@" + memSegment);
+      result.add("D=M");
+      result.add("@" + Translator.SP);
+      result.add("A=M");
+      result.add("M=D");
+      result.add("@" + Translator.SP);
+      result.add("AM=M+1");
+      return result;
+   }
 
 
 }

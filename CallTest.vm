@@ -1,0 +1,13 @@
+push constant 1
+push constant 2
+push constant 3
+call adder 2
+add
+label LOOP
+goto LOOP
+
+function adder 0
+push argument 0
+push argument 1
+add
+return

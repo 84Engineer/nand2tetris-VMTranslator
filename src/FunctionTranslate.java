@@ -7,6 +7,8 @@ public class FunctionTranslate {
    private final static String TEMP_REG_1 = "R14";
    private final static String TEMP_REG_2 = "R15";
 
+   private static long retCount = 0;
+
    private String fileName;
 
    public FunctionTranslate(String fileName) {
@@ -35,6 +37,8 @@ public class FunctionTranslate {
             // Saving return address
             result.add("@5");
             result.add("D=D-A");
+            result.add("A=D");
+            result.add("D=M");
             result.add("@" + TEMP_REG_1);
             result.add("M=D");
             // Passing return value
@@ -57,14 +61,17 @@ public class FunctionTranslate {
             result.addAll(restoreMemorySegment(Translator.ARG));
             result.addAll(restoreMemorySegment(Translator.LCL));
             // Goto return address
-//            result.add("@" + TEMP_REG_1);
-//            result.add("0;JMP");
+            result.add("@" + TEMP_REG_1);
+            result.add("A=M");
+            result.add("0;JMP");
             break;
          case call:
             // pushing return address
+            result.add("@" + fileName + ".ret" + retCount);
+            result.add("D=A");
             result.add("@" + Translator.SP);
             result.add("A=M");
-            result.add("M=A"); //???
+            result.add("M=D"); //???
             result.add("@" + Translator.SP);
             result.add("AM=M+1");
             // pushing memory segments
@@ -87,10 +94,10 @@ public class FunctionTranslate {
             result.add("@" + Translator.LCL);
             result.add("M=D");
             // goto function
-            result.add("@" + vmCommand.getArg0());
+            result.add("@" + fileName + "." + vmCommand.getArg0());
             result.add("0;JMP");
             // declare return address
-
+            result.add("(" + fileName + ".ret" + retCount++ + ")");
             break;
       }
       return result;

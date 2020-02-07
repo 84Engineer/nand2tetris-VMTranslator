@@ -40,6 +40,12 @@ public class Translator {
       for (VmCommand vmCommand : vmCommands) {
          asmCode.add(VMTranslator.COMMENT + " " + vmCommand.getVmCommand());
          switch (vmCommand.getOpCode()) {
+            case ram:
+               asmCode.add("@" + vmCommand.getArg1());
+               asmCode.add("D=A");
+               asmCode.add("@" + vmCommand.getArg0());
+               asmCode.add("M=D");
+               break;
             case push:
                asmCode.addAll(pushTranslate.translate(vmCommand));
                break;

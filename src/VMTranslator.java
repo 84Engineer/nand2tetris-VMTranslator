@@ -13,19 +13,30 @@ public class VMTranslator {
         }
 
         FileUtil fileUtil = new FileUtil(args[0]);
+
+        Bootstrap bootstrap = new Bootstrap();
         List<String> asmCode = new ArrayList<>();
 
-        for (String filePath : fileUtil.getAllFiles()) {
-            List<String> sourceCode = fileUtil.readAllLines(filePath);
+        List<String> allFiles = fileUtil.getAllFiles();
 
-            Parser parser = new Parser(sourceCode);
-            List<VmCommand> commands = parser.process();
+        if (allFiles.stream().noneMatch(name -> name.contains("BasicLoop") || name.contains("FibonacciSeries") || name.contains("SimpleFunction"))) {
+            asmCode.addAll(generateAsmCode(bootstrap.getBootStrapCode(), "Bootstrap.vm"));
+        }
 
-            Translator translator = new Translator(fileUtil.getFileName(filePath), commands);
-            asmCode.addAll(translator.translate());
+        for (String filePath : allFiles) {
+            asmCode.addAll(generateAsmCode(fileUtil.readAllLines(filePath), fileUtil.getFileName(filePath)));
         }
 
         fileUtil.saveAllLines(asmCode);
+
+    }
+
+    private static List<String> generateAsmCode(List<String> sourceCode, String fileName) {
+        Parser parser = new Parser(sourceCode);
+        List<VmCommand> commands = parser.process();
+
+        Translator translator = new Translator(fileName, commands);
+        return translator.translate();
 
     }
 

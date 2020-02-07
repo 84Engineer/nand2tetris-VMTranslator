@@ -19,7 +19,7 @@ public class FunctionTranslate {
       List<String> result = new ArrayList<>();
       switch (vmCommand.getOpCode()) {
          case function:
-            result.add(String.format("(%s.%s)", fileName, vmCommand.getArg0()));
+            result.add(String.format("(%s)", vmCommand.getArg0()));
             for (int i = 0; i < Integer.parseInt(vmCommand.getArg1()); i++) {
                result.add("@" + Translator.SP);
                result.add("A=M");
@@ -67,7 +67,7 @@ public class FunctionTranslate {
             break;
          case call:
             // pushing return address
-            result.add("@" + fileName + ".ret" + retCount);
+            result.add("@" + vmCommand.getArg0() + "$ret." + retCount);
             result.add("D=A");
             result.add("@" + Translator.SP);
             result.add("A=M");
@@ -94,10 +94,10 @@ public class FunctionTranslate {
             result.add("@" + Translator.LCL);
             result.add("M=D");
             // goto function
-            result.add("@" + fileName + "." + vmCommand.getArg0());
+            result.add("@" + vmCommand.getArg0());
             result.add("0;JMP");
             // declare return address
-            result.add("(" + fileName + ".ret" + retCount++ + ")");
+            result.add("(" + vmCommand.getArg0() + "$ret." + retCount++ + ")");
             break;
       }
       return result;
